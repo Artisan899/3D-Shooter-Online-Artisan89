@@ -3,34 +3,24 @@ using UnityEngine;
 
 public class ZombieTakeDamage : NetworkBehaviour
 {
-    public float maxHealth = 40f; //здоровье зомби
+    public float maxHealth = 40f; //Р·РґРѕСЂРѕРІСЊРµ Р·РѕРјР±Рё
+    [SyncVar]
     private float currentHealth;
-    
 
     private void Start()
     {
         currentHealth = maxHealth;
     }
 
-    [Server]
-    public void TakeDamage(float damage)
+
+    public void CmdTakeDamage(float damage)
     {
-        if (!isServer) //метод для сервера сервера
-            return; 
 
         currentHealth -= damage;
         if (currentHealth <= 0f)
         {
-            Die();
+            Destroy(gameObject);
+            SpawnEnemy.Instance.EnemyDied(this);
         }
     }
-
-    [Server]
-    private void Die()
-    {
-        NetworkServer.Destroy(gameObject); // Уничтожаем объект на сервере
-
-        SpawnEnemy.Instance.EnemyDied(this);
-    }
-
 }
