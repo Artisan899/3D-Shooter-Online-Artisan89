@@ -25,10 +25,10 @@ public class SpawnEnemy : NetworkBehaviour
     }
 
 
-    public void EnemyDied(ZombieTakeDamage zombie) //При смерти зомби их колличество -1
+    public void EnemyDied(ZombieTakeDamage zombie) 
     {
         nowTheEnemies--;
- 
+
     }
 
     private int randEnemy;
@@ -51,26 +51,26 @@ public class SpawnEnemy : NetworkBehaviour
         if (!isServer)
             return;
 
-        if (spawnerInterval <= 0 && nowTheEnemies < numberOfEnemies) //Если прошёл спавн интервал и колличество врагов < максимального
+        if (spawnerInterval <= 0 && nowTheEnemies < numberOfEnemies) 
         {
-            randEnemy = Random.Range(0, staticSpawnEnemy.Length); //Рандомный враг
-            randPoint = Random.Range(0, staticSpawnPoint.Length); //Рандомная позиция спавна
+            randEnemy = Random.Range(0, staticSpawnEnemy.Length); 
+            randPoint = Random.Range(0, staticSpawnPoint.Length); 
 
-            GameObject enemy = Instantiate(staticSpawnEnemy[randEnemy], staticSpawnPoint[randPoint].transform.position, Quaternion.identity); //Создание врага
+            GameObject enemy = Instantiate(staticSpawnEnemy[randEnemy], staticSpawnPoint[randPoint].transform.position, Quaternion.identity);
 
-            NetworkServer.Spawn(enemy); // Спавн на сервере
+            NetworkServer.Spawn(enemy, connectionToClient); 
 
-            spawnerInterval = startSpawnerInterval; //Обнуление интервала
-            nowTheEnemies++; //Колличество врагов +1
+            spawnerInterval = startSpawnerInterval; 
+            nowTheEnemies++; 
         }
         else
         {
-            spawnerInterval -= Time.deltaTime; //Уменьшение интервала до спавна
+            spawnerInterval -= Time.deltaTime; 
         }
     }
 
     [ClientRpc]
-    void RpcSpawnEnemy(GameObject enemy)  //Синхронизация на сервере
+    void RpcSpawnEnemy(GameObject enemy)  
     {
         if (!isServer)
         {
