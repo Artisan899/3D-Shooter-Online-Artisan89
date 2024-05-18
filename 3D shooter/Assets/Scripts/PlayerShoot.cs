@@ -11,7 +11,7 @@ public class PlayerShoot : NetworkBehaviour
     public TextMeshProUGUI ammoText;
 
     private Animator _anim;
-    
+
 
     [SyncVar]
     private int currentAmmo;
@@ -21,7 +21,7 @@ public class PlayerShoot : NetworkBehaviour
     private void Start()
     {
         _anim = GetComponent<Animator>();
-        currentAmmo = weapon.mxAmmo;  //Количество патронов у игрока
+        currentAmmo = weapon.mxAmmo;  //РљРѕР»РёС‡РµСЃС‚РІРѕ РїР°С‚СЂРѕРЅРѕРІ Сѓ РёРіСЂРѕРєР°
         UpdateAmmoText();
     }
 
@@ -31,32 +31,31 @@ public class PlayerShoot : NetworkBehaviour
         Player playerScript = player.GetComponent<Player>();
         if (playerScript != null)
         {
-            playerScript.TakeDamage(damage); //Получение урона игроком от игрока
+            playerScript.TakeDamage(damage); //РџРѕР»СѓС‡РµРЅРёРµ СѓСЂРѕРЅР° РёРіСЂРѕРєРѕРј РѕС‚ РёРіСЂРѕРєР°
         }
     }
 
     void Shoot()
     {
-
-        if (isReloading || currentAmmo <= 0) //При перезарядки не стреляем
+        if (isReloading || currentAmmo <= 0) //РџСЂРё РїРµСЂРµР·Р°СЂСЏРґРєРё РЅРµ СЃС‚СЂРµР»СЏРµРј
         {
             return;
         }
 
-        if (currentAmmo <= 0) // //При перезарядки не стреляем
+        if (currentAmmo <= 0) // //РџСЂРё РїРµСЂРµР·Р°СЂСЏРґРєРё РЅРµ СЃС‚СЂРµР»СЏРµРј
         {
             return;
         }
 
-        if (cam == null) //Постоновка камеры, для избежания её потери и ошибок
+        if (cam == null) //РџРѕСЃС‚РѕРЅРѕРІРєР° РєР°РјРµСЂС‹, РґР»СЏ РёР·Р±РµР¶Р°РЅРёСЏ РµС‘ РїРѕС‚РµСЂРё Рё РѕС€РёР±РѕРє
             return;
 
         RaycastHit _hit;
-        if (Physics.Raycast(cam.transform.position, cam.transform.forward, out _hit, weapon.range, mask))  //Механика выстрела игрока
+        if (Physics.Raycast(cam.transform.position, cam.transform.forward, out _hit, weapon.range, mask))  //РњРµС…Р°РЅРёРєР° РІС‹СЃС‚СЂРµР»Р° РёРіСЂРѕРєР°
         {
             if (_hit.collider.tag == "Player")
             {
-                CmdPlayerShoot(_hit.collider.gameObject, weapon.damage); //Игрок в которого попали получает урон
+                CmdPlayerShoot(_hit.collider.gameObject, weapon.damage); //РРіСЂРѕРє РІ РєРѕС‚РѕСЂРѕРіРѕ РїРѕРїР°Р»Рё РїРѕР»СѓС‡Р°РµС‚ СѓСЂРѕРЅ
             }
 
             if (_hit.collider.tag == "Zombie")
@@ -64,32 +63,32 @@ public class PlayerShoot : NetworkBehaviour
                 ZombieTakeDamage zombieScript = _hit.collider.gameObject.GetComponent<ZombieTakeDamage>();
                 if (zombieScript != null)
                 {
-                    zombieScript.TakeDamage(weapon.damage);  //NPC получает урон
+                    zombieScript.TakeDamage(weapon.damage);  //NPC РїРѕР»СѓС‡Р°РµС‚ СѓСЂРѕРЅ
                 }
             }
         }
 
-        currentAmmo--;  //После выстрела кол-во патронов -1
-        UpdateAmmoText(); // Функция Визуальное обновление
+        currentAmmo--;  //РџРѕСЃР»Рµ РІС‹СЃС‚СЂРµР»Р° РєРѕР»-РІРѕ РїР°С‚СЂРѕРЅРѕРІ -1
+        UpdateAmmoText(); // Р¤СѓРЅРєС†РёСЏ Р’РёР·СѓР°Р»СЊРЅРѕРµ РѕР±РЅРѕРІР»РµРЅРёРµ
     }
 
     void UpdateAmmoText()
     {
         if (ammoText != null)
         {
-            ammoText.text = "Ammo: " + currentAmmo.ToString(); //Визуальное обновление
+            ammoText.text = "Ammo: " + currentAmmo.ToString(); //Р’РёР·СѓР°Р»СЊРЅРѕРµ РѕР±РЅРѕРІР»РµРЅРёРµ
         }
     }
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0)) //Выстрел осуществляется с помощью ЛКМ
+        if (Input.GetMouseButtonDown(0)) //Р’С‹СЃС‚СЂРµР» РѕСЃСѓС‰РµСЃС‚РІР»СЏРµС‚СЃСЏ СЃ РїРѕРјРѕС‰СЊСЋ Р›РљРњ
         {
-            _anim.SetBool("FireWeapon", true); //Анимация выстрела
-            Shoot(); //Выстрел
-            StartCoroutine(ResetFireWeaponAnimation()); //Переазярдка анимации выстрела
+            _anim.SetBool("FireWeapon", true); //РђРЅРёРјР°С†РёСЏ РІС‹СЃС‚СЂРµР»Р°
+            Shoot(); //Р’С‹СЃС‚СЂРµР»
+            StartCoroutine(ResetFireWeaponAnimation()); //РџРµСЂРµР°Р·СЏСЂРґРєР° Р°РЅРёРјР°С†РёРё РІС‹СЃС‚СЂРµР»Р°
         }
-        if (Input.GetKeyDown(KeyCode.R)) //Перезарядка на соот клавишу
+        if (Input.GetKeyDown(KeyCode.R)) //РџРµСЂРµР·Р°СЂСЏРґРєР° РЅР° СЃРѕРѕС‚ РєР»Р°РІРёС€Сѓ
         {
             StartCoroutine(Reload());
         }
@@ -97,7 +96,7 @@ public class PlayerShoot : NetworkBehaviour
 
     IEnumerator ResetFireWeaponAnimation()
     {
-        yield return new WaitForSeconds(0.2f); // длительность анимации выстрела
+        yield return new WaitForSeconds(0.2f); // РґР»РёС‚РµР»СЊРЅРѕСЃС‚СЊ Р°РЅРёРјР°С†РёРё РІС‹СЃС‚СЂРµР»Р°
         _anim.SetBool("FireWeapon", false);
     }
 
@@ -105,16 +104,16 @@ public class PlayerShoot : NetworkBehaviour
 
     IEnumerator Reload()
     {
-        if (isReloading || currentAmmo == weapon.mxAmmo) // Проверка на перезарядку и полное магазином
+        if (isReloading || currentAmmo == weapon.mxAmmo) // РџСЂРѕРІРµСЂРєР° РЅР° РїРµСЂРµР·Р°СЂСЏРґРєСѓ Рё РїРѕР»РЅРѕРµ РјР°РіР°Р·РёРЅРѕРј
         {
             yield break;
         }
 
-        _anim.SetBool("Reloadd", true); // Старт анимации перезарядки
+        _anim.SetBool("Reloadd", true); // РЎС‚Р°СЂС‚ Р°РЅРёРјР°С†РёРё РїРµСЂРµР·Р°СЂСЏРґРєРё
         isReloading = true;
-        yield return new WaitForSeconds(weapon.reloading); // Время перезарядки из weapon
-        currentAmmo = weapon.mxAmmo; // Обновление патронов на макс
-        _anim.SetBool("Reloadd", false); // Конец анимации перезарядки
+        yield return new WaitForSeconds(weapon.reloading); // Р’СЂРµРјСЏ РїРµСЂРµР·Р°СЂСЏРґРєРё РёР· weapon
+        currentAmmo = weapon.mxAmmo; // РћР±РЅРѕРІР»РµРЅРёРµ РїР°С‚СЂРѕРЅРѕРІ РЅР° РјР°РєСЃ
+        _anim.SetBool("Reloadd", false); // РљРѕРЅРµС† Р°РЅРёРјР°С†РёРё РїРµСЂРµР·Р°СЂСЏРґРєРё
         isReloading = false;
         UpdateAmmoText();
     }
