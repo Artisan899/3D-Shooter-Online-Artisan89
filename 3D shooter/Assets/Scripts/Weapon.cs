@@ -4,7 +4,7 @@ using UnityEngine;
 public class Weapon 
 {
     public string name = "Pistol";
-    public float damage = 10;
+    public int damage = 10;
     public float range = 1000f;
     public int ammo = 10;
     public int mxAmmo = 10;
